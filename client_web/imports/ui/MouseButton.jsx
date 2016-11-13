@@ -10,42 +10,44 @@ class MouseButton extends React.Component {
 
         this.onButtonDown = this.onButtonDown.bind(this);
         this.onButtonUp = this.onButtonUp.bind(this);
+        this.postToServer = this.postToServer.bind(this); 
+    }
+
+    postToServer(event){
+        axios({
+            method: "post",
+            url: this.props.targetURL,
+            data: {
+                "user": "ajsndkjaskdjbaksdba",
+                "event": event,
+            },
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
 
     onButtonDown(){
-        axios.post(this.props.targetURL, 
-            {
-                "@type": "MouseButtonEvent",
-                "buttonDown": [this.props.buttonVal], 
-                "buttonUp": []
-            },
-            {
-                "headers": {
-                    "Content-Type": "application/json"
-                }
-            }
-        )
-          .then(function (response) {
-                  console.log(response);
-                })
-          .catch(function (error) {
-                  console.log(error);
-                });
+        this.postToServer({
+            "@type": "MouseButtonEvent",
+            "buttonDown": [this.props.buttonVal], 
+            "buttonUp": []
+        });
     }
-    
+              
     onButtonUp(){
-        axios.post(this.props.targetURL, {
-            "@type": "MouseButtonEvent"
+        this.postToServer({
+            "@type": "MouseButtonEvent",
             "buttonDown": [], 
             "buttonUp": [this.props.buttonVal]
-        })
-          .then(function (response) {
-                  console.log(response);
-                })
-          .catch(function (error) {
-                  console.log(error);
-                });
+        });
     }
 
     render() {
@@ -53,7 +55,7 @@ class MouseButton extends React.Component {
             <div>
                 <Button onActivate={this.onButtonDown} onDeactivate={this.onButtonUp}> {this.props.buttonName}</Button>
             </div>
-        )button}
+        )}
 
 }
 export default MouseButton;

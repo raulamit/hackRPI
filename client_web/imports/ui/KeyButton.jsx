@@ -10,42 +10,43 @@ class KeyButton extends React.Component {
 
         this.onButtonDown = this.onButtonDown.bind(this);
         this.onButtonUp = this.onButtonUp.bind(this);
+        this.postToServer = this.postToServer.bind(this); 
     }
 
+    postToServer(event){
+        axios({
+            method: "post",
+            url: this.props.targetURL,
+            data: {
+                "user": "ajsndkjaskdjbaksdba",
+                "event": event,
+            },
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     onButtonDown(){
-        axios.post(this.props.targetURL, 
-            {
+        this.postToServer({
                 "@type": "KeyboardEvent",
-                "buttonDown": [this.props.keyVal], 
-                "buttonUp": []
-            },
-            {
-                "headers": {
-                    "Content-Type": "application/json"
-                }
-            }
-        )
-          .then(function (response) {
-                  console.log(response);
-                })
-          .catch(function (error) {
-                  console.log(error);
-                });
+                "keyDown": [this.props.keyVal], 
+                "keyUp": []
+            });
     }
     
     onButtonUp(){
-        axios.post(this.props.targetURL, {
+        this.postToServer({
             "@type": "KeyboardEvent",
-            "buttonDown": [], 
-            "buttonUp": [this.props.keyVal]
-        })
-          .then(function (response) {
-                  console.log(response);
-                })
-          .catch(function (error) {
-                  console.log(error);
-                });
+            "keyDown": [], 
+            "keyUp": [this.props.keyVal]
+        });
     }
 
     render() {

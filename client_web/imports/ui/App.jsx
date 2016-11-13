@@ -46,18 +46,23 @@ export default class App extends Component {
             "inputs" : [
                 {
                     "@type": "keybutton",
-                    "name": "a",
-                    "value": "1"
+                    "name": "q",
+                    "value": "q"
                 },
                 {
                     "@type": "keybutton",
-                    "name": "b",
-                    "value": "1"
+                    "name": "w",
+                    "value": "w"
                 },
                 {
                     "@type": "keybutton",
-                    "name": "c",
-                    "value": "1"
+                    "name": "o",
+                    "value": "o"
+                },
+                {
+                    "@type": "keybutton",
+                    "name": "p",
+                    "value": "p"
                 }
             ]
         })
