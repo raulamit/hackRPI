@@ -36,13 +36,7 @@ server:
       keyStorePassword: example
       validateCerts: false
       validatePeers: false
-    #this requires the alpn-boot library on the JVM's boot classpath
-    #- type: h2
-    #  port: 8445
-    #  keyStorePath: example.keystore
-    #  keyStorePassword: example
-    #  validateCerts: false
-    #  validatePeers: false
+
   adminConnectors:
     - type: http
       port: 8081
@@ -53,6 +47,9 @@ server:
       validateCerts: false
       validatePeers: false
 
+couchHost: localhost:8091
+couchBucket: buttonSchema
+#bucketPass: ""
 # Logging settings.
 logging:
 
