@@ -1,11 +1,15 @@
 package com.example.uremote.resources;
 
+import com.example.uremote.api.Event;
+import com.example.uremote.api.MouseMoveEvent;
 import com.example.uremote.api.UserEvent;
 import com.example.uremote.handler.URemoteHandler;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import java.awt.*;
@@ -18,17 +22,34 @@ public class EventResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventResource.class);
 
     @POST
-    public void receive(@Valid UserEvent userEvent) {
+    public String receive(UserEvent userEvent ){
+//        Event ev = new MouseMoveEvent();
+//        ((MouseMoveEvent) ev).setMouseX(200);
+//        ((MouseMoveEvent) ev).setMouseY(200);
+//        UserEvent userEvent =new UserEvent();
         LOGGER.info("Received a saying: {}", userEvent);
+        try {
+            URemoteHandler uRemoteHandler = new URemoteHandler();
+            uRemoteHandler.process(userEvent.getEvent());
+        } catch (AWTException e) {
+            LOGGER.error(e.getMessage());
+            return "failure while processing your request";
+        } catch (Exception e){
+            LOGGER.error(e.getMessage());
+            return "failure typcasting the event";
+        }
+
+        return "Success";
     }
 
-    @POST
+    @GET
     @Path("kev")
-    public String receiveKev(String kev) {
+    public String receiveKev() {
+        String kev ="a";
         LOGGER.info("key event is" + kev);
         try {
             URemoteHandler uRemoteHandler = new URemoteHandler();
-            uRemoteHandler.process(kev);
+//            uRemoteHandler.process(kev);
         }catch (AWTException e){
             LOGGER.error(e.getMessage());
             return "failure while processing your request";
