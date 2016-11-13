@@ -24,10 +24,7 @@ public class EventResource {
 
     @POST
     public String receive(UserEvent userEvent ){
-//        Event ev = new MouseMoveEvent();
-//        ((MouseMoveEvent) ev).setMouseX(200);
-//        ((MouseMoveEvent) ev).setMouseY(200);
-//        UserEvent userEvent =new UserEvent();
+
         LOGGER.info("Received a saying: {}", userEvent);
         try {
             URemoteHandler uRemoteHandler = new URemoteHandler();

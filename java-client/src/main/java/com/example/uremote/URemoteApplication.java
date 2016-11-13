@@ -1,17 +1,17 @@
 package com.example.uremote;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.CouchbaseCluster;
 import com.example.uremote.core.User;
-import com.example.uremote.db.PersonDAO;
 import com.example.uremote.filter.DateRequiredFeature;
 import com.example.uremote.health.TemplateHealthCheck;
+import com.example.uremote.resources.ControlSchemaResource;
 import com.example.uremote.resources.EventResource;
-import com.example.uremote.resources.FilteredResource;
-import com.example.uremote.resources.PeopleResource;
 import com.example.uremote.tasks.EchoTask;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -22,22 +22,21 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
 import java.util.Map;
 
-public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+public class URemoteApplication extends Application<URemoteConfiguration> {
     public static void main(String[] args) throws Exception {
-        new HelloWorldApplication().run(args);
+        new URemoteApplication().run(args);
     }
 
-    private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
-        new HibernateBundle<HelloWorldConfiguration>(com.example.uremote.core.Person.class) {
+    private final HibernateBundle<URemoteConfiguration> hibernateBundle =
+        new HibernateBundle<URemoteConfiguration>(com.example.uremote.core.Person.class) {
             @Override
-            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+            public DataSourceFactory getDataSourceFactory(URemoteConfiguration configuration) {
                 return configuration.getDataSourceFactory();
             }
         };
@@ -48,7 +47,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     }
 
     @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+    public void initialize(Bootstrap<URemoteConfiguration> bootstrap) {
         // Enable variable substitution with environment variables
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(
@@ -59,24 +58,23 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
         bootstrap.addCommand(new com.example.uremote.cli.RenderCommand());
         bootstrap.addBundle(new AssetsBundle());
-        bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
+        bootstrap.addBundle(new MigrationsBundle<URemoteConfiguration>() {
             @Override
-            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+            public DataSourceFactory getDataSourceFactory(URemoteConfiguration configuration) {
                 return configuration.getDataSourceFactory();
             }
         });
         bootstrap.addBundle(hibernateBundle);
-        bootstrap.addBundle(new ViewBundle<HelloWorldConfiguration>() {
+        bootstrap.addBundle(new ViewBundle<URemoteConfiguration>() {
             @Override
-            public Map<String, Map<String, String>> getViewConfiguration(HelloWorldConfiguration configuration) {
+            public Map<String, Map<String, String>> getViewConfiguration(URemoteConfiguration configuration) {
                 return configuration.getViewRendererConfiguration();
             }
         });
     }
 
     @Override
-    public void run(HelloWorldConfiguration configuration, Environment environment) {
-        final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
+    public void run(URemoteConfiguration configuration, Environment environment) {
         final com.example.uremote.core.Template template = configuration.buildTemplate();
         final FilterRegistration.Dynamic cors =
                 environment.servlets().addFilter("CORS", CrossOriginFilter.class);
@@ -96,14 +94,10 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
                 .setAuthorizer(new com.example.uremote.auth.ExampleAuthorizer())
                 .setRealm("SUPER SECRET STUFF")
                 .buildAuthFilter()));
-        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
-        environment.jersey().register(RolesAllowedDynamicFeature.class);
-        environment.jersey().register(new com.example.uremote.resources.HelloWorldResource(template));
-        environment.jersey().register(new com.example.uremote.resources.ViewResource());
-        environment.jersey().register(new com.example.uremote.resources.ProtectedResource());
-        environment.jersey().register(new PeopleResource(dao));
-        environment.jersey().register(new com.example.uremote.resources.PersonResource(dao));
-        environment.jersey().register(new FilteredResource());
+//        configuration.
+        Cluster cluster = CouchbaseCluster.create(configuration.getCouchHost());
+        Bucket bucket = cluster.openBucket(configuration.getCouchBucket(), "");
         environment.jersey().register(new EventResource());
+        environment.jersey().register(new ControlSchemaResource(bucket));
     }
 }

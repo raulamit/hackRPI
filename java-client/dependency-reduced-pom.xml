@@ -120,7 +120,7 @@
           <transformers>
             <transformer />
             <transformer>
-              <mainClass>com.example.uremote.HelloWorldApplication</mainClass>
+              <mainClass>com.example.uremote.URemoteApplication</mainClass>
             </transformer>
           </transformers>
         </configuration>

@@ -11,12 +11,35 @@ import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Map;
 
-public class HelloWorldConfiguration extends Configuration {
+public class URemoteConfiguration extends Configuration {
     @NotEmpty
     private String template;
 
     @NotEmpty
     private String defaultName = "Stranger";
+
+    @NotEmpty
+    private String couchHost;
+
+    public String getCouchHost() {
+        return couchHost;
+    }
+
+    public void setCouchHost(String couchHost) {
+        this.couchHost = couchHost;
+    }
+
+    public String getCouchBucket() {
+        return couchBucket;
+    }
+
+    public void setCouchBucket(String couchBucket) {
+        this.couchBucket = couchBucket;
+    }
+
+    @NotEmpty
+    private String couchBucket;
+
 
     @Valid
     @NotNull
