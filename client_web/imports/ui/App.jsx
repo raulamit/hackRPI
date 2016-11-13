@@ -30,7 +30,7 @@ export default class App extends Component {
             reqIndex: thisReqIndex
         });
 
-        axios.get('http://' + _baseURL + "/schema?app=qwop", {
+        axios.get('http://' + _baseURL + "/schema?app=arrow", {
             responseType: 'json' 
         })
             .then((response) => {
@@ -51,7 +51,7 @@ export default class App extends Component {
 
     render() {
         var controls = this.state.controls;
-        var controlsPortions;
+        var controlsPortion;
         if(controls){
             controlsPortion = (
                 <Controller inputs={controls["inputs"]} targetURL={"http://"+this.state.baseURL+"/event"} />

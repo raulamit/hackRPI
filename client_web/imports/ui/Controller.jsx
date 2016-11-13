@@ -14,18 +14,18 @@ class Controller extends React.Component {
         if(this.props.inputs){
             return this.props.inputs.map(this.renderInput);
         }
-        return [];
+        return (<div></div>);
     }
 
     renderInput(input, index) {
         var elt;
         if(input["@type"] == "keybutton")
         {
-            elt = (<KeyButton keyName={input.name} keyVal={input.value} targetURL={this.props.targetURL}/>);
+            elt = (<KeyButton keyName={input.name} keyVal={input.value} targetURL={this.props.targetURL} />);
         }
         else if(input["@type"] == "mousebutton")
         {
-            elt = (<MouseButton buttonName={input.name} buttonVal={input.value} targetURL={this.props.targetURL}/>);
+            elt = (<MouseButton buttonName={input.name} buttonVal={input.value} targetURL={this.props.targetURL} />);
         }
         else
         {
@@ -37,13 +37,16 @@ class Controller extends React.Component {
 
 
     render() {
-        return (
+        var inputs = this.renderInputs();
+        var ret =  (
             <div className="container">
                 <ul>
-                {this.renderInputs()}
+                {inputs}
                 </ul>
             </div>
         );
+
+        return ret;
     }
 }
 

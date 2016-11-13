@@ -125,5 +125,4 @@ class MouseButton extends React.Component {
 }
 
 
-export default KeyButton;
-export default MouseButton;
+export {KeyButton, MouseButton};
