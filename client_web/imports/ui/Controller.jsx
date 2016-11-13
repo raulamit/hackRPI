@@ -1,8 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import KeyButton from './KeyButton.jsx';
-import MouseButton from './MouseButton.jsx';
+import {KeyButton,MouseButton} from './CtrlButton.jsx';
 
 class Controller extends React.Component {
     constructor(props) {
@@ -38,7 +37,6 @@ class Controller extends React.Component {
 
 
     render() {
-
         return (
             <div className="container">
                 <ul>

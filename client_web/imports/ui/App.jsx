@@ -12,64 +12,45 @@ export default class App extends Component {
         //A bit hackish since this is top level. Should really be separate
         //Web wrapper around inputs and controller to handle web stuff
         this.state = {
-            baseURL: "129.161.68.194:8090"
+            baseURL: "129.161.68.194:8090",
+            controls: null,
+            reqIndex: 0
         };
 
         this.onTextChange = this.onTextChange.bind(this);
-        this.pullControls = this.pullControls.bind(this);
     }
 
     //Handle change in ip box
     onTextChange(event) {
-        this.setState( {
-            baseURL: event.target.value
-        });
-    }
+        var _baseURL = event.target.value;
+        var thisReqIndex = this.state.reqIndex + 1;
 
-    //Grab controls from baseURL
-    pullControls() {
-            /*
-        axios.get(this.state.baseURL + "/controls", {)
+        this.setState( {
+            baseURL: _baseURL,
+            reqIndex: thisReqIndex
+        });
+
+        axios.get('http://' + _baseURL + "/schema?app=qwop", {
+            responseType: 'json' 
+        })
             .then((response) => {
-                return(response);
+                this.setState({
+                    "controls": response["data"]
+                });
             })
             .catch((error) => {
                 console.log(error);
-                return null;
-            });
-
-        return null;
-        */
-        return (
-            {
-            "@data": "Controls",
-            "inputs" : [
+                if(this.state.reqIndex == thisReqIndex)
                 {
-                    "@type": "keybutton",
-                    "name": "q",
-                    "value": "q"
-                },
-                {
-                    "@type": "keybutton",
-                    "name": "w",
-                    "value": "w"
-                },
-                {
-                    "@type": "keybutton",
-                    "name": "o",
-                    "value": "o"
-                },
-                {
-                    "@type": "keybutton",
-                    "name": "p",
-                    "value": "p"
+                    //this.setState({
+                    //controls: null
+                    //});
                 }
-            ]
-        })
+            });
     }
 
     render() {
-        var controls = this.pullControls();
+        var controls = this.state.controls;
         var controlsPortions;
         if(controls){
             controlsPortion = (
