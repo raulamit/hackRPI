@@ -26,10 +26,18 @@ public class URemoteHandler {
         else if (event instanceof KeyboardEvent){
             KeyboardEvent kev = (KeyboardEvent) event;
             for (String key : kev.getKeyDown()) {
-                this.pressKey(key);
+                if(this.isNumeric(key)) {
+                    robot.keyPress(Integer.parseInt(key));
+                }else{
+                    this.pressKey(key);
+                }
             }
             for (String key : kev.getKeyUp()) {
-                this.releaseKey(key);
+                if(this.isNumeric(key)) {
+                    robot.keyRelease(Integer.parseInt(key));
+                }else {
+                    this.releaseKey(key);
+                }
             }
         } else if (event instanceof MouseButtonEvent){
             MouseButtonEvent mbe = (MouseButtonEvent) event;
@@ -43,6 +51,20 @@ public class URemoteHandler {
         }
 
 //        robot.mouseMove(event.getMouseX(), event.getMouseY());
+    }
+
+
+    public boolean isNumeric(String str)
+    {
+        try
+        {
+            int d = Integer.parseInt(str);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
     }
 
     public void example() {
@@ -121,7 +143,6 @@ public class URemoteHandler {
             int code = b;
             // keycode only handles [A-Z] (which is ASCII decimal [65-90])
             if (code > 96 && code < 123) code = code - 32;
-            robot.delay(40);
             robot.keyPress(code);
         }
     }
@@ -134,7 +155,6 @@ public class URemoteHandler {
             int code = b;
             // keycode only handles [A-Z] (which is ASCII decimal [65-90])
             if (code > 96 && code < 123) code = code - 32;
-            robot.delay(40);
             robot.keyRelease(code);
         }
     }

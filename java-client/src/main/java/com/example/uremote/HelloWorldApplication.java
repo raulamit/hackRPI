@@ -21,8 +21,12 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import java.util.EnumSet;
 import java.util.Map;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
@@ -74,7 +78,16 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     public void run(HelloWorldConfiguration configuration, Environment environment) {
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
         final com.example.uremote.core.Template template = configuration.buildTemplate();
+        final FilterRegistration.Dynamic cors =
+                environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
+        // Configure CORS parameters
+        cors.setInitParameter("allowedOrigins", "*");
+        cors.setInitParameter("allowedHeaders", "X-Requested-With,Content-Type,Accept,Origin");
+        cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
+
+        // Add URL mapping
+        cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
         environment.admin().addTask(new EchoTask());
         environment.jersey().register(DateRequiredFeature.class);
